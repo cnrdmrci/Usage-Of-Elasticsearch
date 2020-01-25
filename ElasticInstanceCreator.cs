@@ -41,10 +41,11 @@ namespace Usage_Of_Elasticsearch
                                           $"{new string('-', 30)}\n");
                     }
                 });
+        private static readonly ElasticClient elasticClient = new ElasticClient(connSettings);
 
         public static ElasticClient GetElasticClientInstance()
         {
-            return new ElasticClient(connSettings);
+            return elasticClient;
         }
 
 
