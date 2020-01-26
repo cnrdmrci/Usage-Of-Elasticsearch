@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 using Usage_Of_Elasticsearch.DocumentApi;
+using Usage_Of_Elasticsearch.DocumentApi.MultiDocumentApi;
 
 namespace Usage_Of_Elasticsearch.Controllers
 {
@@ -13,7 +14,7 @@ namespace Usage_Of_Elasticsearch.Controllers
     [ApiController]
     public class DocumentApiController : ControllerBase
     {
-        #region Singleton Document Api
+        #region Single Document Api
 
         [HttpPut("CreateIndex")]
         public async Task<IActionResult> CreateIndex()
@@ -112,6 +113,85 @@ namespace Usage_Of_Elasticsearch.Controllers
             return BadRequest(id + " id could not removed.");
         }
 
+        #endregion
+
+        #region Multi Document Api
+
+        [HttpGet("MultiGetDataByIds")]
+        public async Task<IActionResult> MultiGetDataByIds()
+        {
+            List<string> ids = new List<string>{"1","5"};
+            MultiGetApi multiGetApi = new MultiGetApi();
+            List<User> response = await multiGetApi.MultiGetDataByIds<User>(ConstantStrings.IndexName, ids);
+
+            return Ok(response);
+        }
+
+        [HttpPost("Reindex")]
+        public async Task<IActionResult> Reindex()
+        {
+            ReindexApi reindexApi = new ReindexApi();
+            var response = await reindexApi.ReindexSourceToDestionation(ConstantStrings.IndexName, "example_reindex");
+            return Ok(response);
+        }
+
+        [HttpPost("AddBulkData")]
+        public async Task<IActionResult> AddBulkData()
+        {
+            var users = new[]
+            {
+                new User
+                {
+                    Id = 3,
+                    UserName = "user3",
+                    FirstName = "First user 3",
+                    LastName = "LastName3",
+                    Age = 23,
+                    Gender = "M"
+                },
+                new User
+                {
+                    Id = 4,
+                    UserName = "user4",
+                    FirstName = "First user 4",
+                    LastName = "LastName4",
+                    Age = 24,
+                    Gender = "M"
+                },
+                new User
+                {
+                    Id = 5,
+                    UserName = "user5",
+                    FirstName = "First user 5",
+                    LastName = "LastName5",
+                    Age = 25,
+                    Gender = "M"
+                }
+                // snip
+            };
+
+            BulkApi bulkApi = new BulkApi();
+            var response = await bulkApi.AddBulkData(ConstantStrings.IndexName, users);
+
+            return Ok(response);
+        }
+
+        [HttpPost("UpdateByQuery")]
+        public async Task<IActionResult> UpdateByQuery()
+        {
+            UpdateByQueryApi updateByQueryApi = new UpdateByQueryApi();
+            var response = await updateByQueryApi.UpdateByQueryAsync(ConstantStrings.IndexName);
+            var response2 = await updateByQueryApi.UpdateByQueryWithUserNameAsync<User>(ConstantStrings.IndexName);
+            return Ok(response);
+        }
+
+        [HttpDelete("DeleteByQuery/{userName}")]
+        public async Task<IActionResult> DeleteByQuery(string userName)
+        {
+            DeleteByQueryApi deleteByQueryApi = new DeleteByQueryApi();
+            var response = await deleteByQueryApi.DeleteByQueryAsync<User>(ConstantStrings.IndexName, userName);
+            return Ok(response);
+        }
         #endregion
 
     }
