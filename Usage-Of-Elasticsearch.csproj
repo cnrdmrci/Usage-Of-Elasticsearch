@@ -11,5 +11,11 @@
     <PackageReference Include="NEST" Version="7.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="QueryDSL\CompoundQueries\" />
+    <Folder Include="QueryDSL\FullTextQueries\" />
+    <Folder Include="QueryDSL\TermLevelQueries\" />
+  </ItemGroup>
+
 
 </Project>
