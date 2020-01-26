@@ -8,5 +8,6 @@ namespace Usage_Of_Elasticsearch
     public static class ConstantStrings
     {
         public const string IndexName = "user_information";
+        public const string ErrorIndexName = "error_log";
     }
 }
