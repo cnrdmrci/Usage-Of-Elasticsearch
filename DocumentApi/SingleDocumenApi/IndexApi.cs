@@ -9,7 +9,7 @@ namespace Usage_Of_Elasticsearch.DocumentApi
     public class IndexApi
     {
         private ElasticClient elasticClient = ElasticInstanceCreator.GetElasticClientInstance();
-        public bool CreateIndex<T>(int numberOfShards, int numberOfReplicas, string indexName, string aliasName = null) where T : class
+        public async Task<bool> CreateIndexAsync<T>(int numberOfShards, int numberOfReplicas, string indexName, string aliasName = null) where T : class
         {
             if (!checkIndexExists(indexName))
             {
@@ -24,14 +24,14 @@ namespace Usage_Of_Elasticsearch.DocumentApi
                 if(!String.IsNullOrWhiteSpace(aliasName))
                     createIndexDescriptor.Aliases(a => a.Alias(aliasName));
 
-                CreateIndexResponse response = elasticClient.Indices.Create(createIndexDescriptor);
+                CreateIndexResponse response = await elasticClient.Indices.CreateAsync(createIndexDescriptor);
                 return response.Acknowledged;
             }
 
             return true;
         }
 
-        public bool CreateIndex(int numberOfShards, int numberOfReplicas, string indexName, string aliasName = null)
+        public async Task<bool> CreateIndexAsync(int numberOfShards, int numberOfReplicas, string indexName, string aliasName = null)
         {
             if (!checkIndexExists(indexName))
             {
@@ -45,7 +45,7 @@ namespace Usage_Of_Elasticsearch.DocumentApi
                 if (!String.IsNullOrWhiteSpace(aliasName))
                     createIndexDescriptor.Aliases(a => a.Alias(aliasName));
 
-                CreateIndexResponse response = elasticClient.Indices.Create(createIndexDescriptor);
+                CreateIndexResponse response = await elasticClient.Indices.CreateAsync(createIndexDescriptor);
                 return response.Acknowledged;
             }
 
@@ -55,6 +55,12 @@ namespace Usage_Of_Elasticsearch.DocumentApi
         private bool checkIndexExists(string indexName)
         {
             return elasticClient.Indices.Exists(indexName).Exists;
+        }
+
+        public async Task<bool> AddDataAsync<T>(string indexName,T data) where T : class
+        {
+            IndexResponse indexResponse = await elasticClient.IndexAsync<T>(data, idx => idx.Index(indexName));
+            return indexResponse.IsValid;
         }
     }
 }
