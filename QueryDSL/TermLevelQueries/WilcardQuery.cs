@@ -12,6 +12,8 @@ namespace Usage_Of_Elasticsearch.QueryDSL.TermLevelQueries
 
         public async Task<List<T>> SearchUserNameWithWildcardQuery<T>(string indexName, string wildcard) where T : class
         {
+            wildcard = "bro*n";
+            wildcard = "bro?n";
             var response = await _elasticClient.SearchAsync<T>(p => p
                 .Index(indexName)
                 .Query(q => q
