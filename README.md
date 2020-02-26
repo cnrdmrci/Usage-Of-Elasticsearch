@@ -301,7 +301,7 @@ GET newindex/search
 			"Comments": 
 			{
 				"query": "How Caner",
-				slop
+				"slop":2
 			}
 		}
 	}
